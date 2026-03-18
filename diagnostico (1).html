@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Diagnóstico Gratuito — ¿Qué le pasa a tu sistema nervioso?</title>
+<meta name="description" content="Responde 7 preguntas y descubre por qué tu cuerpo no puede calmarse — y qué hacer al respecto.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:#f0f4f8;color:#0f1f2e;max-width:430px;margin:0 auto;min-height:100vh}
+
+/* HEADER */
+.header{background:#fff;padding:14px 20px;border-bottom:1px solid #e8f0f8;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.logo{display:flex;align-items:center;gap:8px}
+.logo-icon{width:28px;height:28px;border-radius:8px;background:#06b6d4;display:flex;align-items:center;justify-content:center;font-size:13px}
+.logo-text{font-size:13px;font-weight:700;color:#0f1f2e}
+.free-badge{background:#e0f7fa;color:#0e7490;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:0.5px}
+
+/* HERO DIAGNÓSTICO */
+.diag-hero{background:linear-gradient(155deg,#0f2744,#061830);padding:28px 20px 24px;text-align:center}
+.diag-tag{display:inline-block;background:rgba(6,182,212,0.2);color:#06b6d4;font-size:10px;letter-spacing:2px;padding:4px 12px;border-radius:20px;margin-bottom:14px;border:1px solid rgba(6,182,212,0.3);font-weight:600}
+.diag-h1{font-size:24px;font-weight:800;color:#fff;line-height:1.25;margin-bottom:8px}
+.diag-h1 span{color:#06b6d4}
+.diag-sub{font-size:13px;color:#94b8d0;line-height:1.6;margin-bottom:18px}
+.diag-stats{display:flex;justify-content:center;gap:24px}
+.dstat{text-align:center}
+.dstat-num{font-size:20px;font-weight:800;color:#06b6d4}
+.dstat-label{font-size:10px;color:#7ab8d4;margin-top:2px}
+
+/* BARRA DE PROGRESO */
+.progress-wrap{background:#fff;padding:14px 20px;border-bottom:1px solid #e8f0f8}
+.progress-top{display:flex;justify-content:space-between;margin-bottom:8px}
+.progress-label{font-size:12px;color:#64748b}
+.progress-step{font-size:12px;font-weight:600;color:#06b6d4}
+.progress-bar-bg{background:#e8f7fa;border-radius:20px;height:6px}
+.progress-bar-fill{height:6px;background:#06b6d4;border-radius:20px;transition:width 0.4s ease;width:0%}
+
+/* PREGUNTAS */
+.quiz-wrap{padding:20px}
+.question-block{display:none;animation:fadeIn 0.3s ease}
+.question-block.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.q-num{font-size:10px;font-weight:700;color:#06b6d4;letter-spacing:2px;margin-bottom:8px}
+.q-text{font-size:18px;font-weight:700;color:#0f1f2e;line-height:1.35;margin-bottom:6px}
+.q-sub{font-size:13px;color:#64748b;margin-bottom:20px;line-height:1.5}
+.options{display:flex;flex-direction:column;gap:10px}
+.opt{background:#fff;border:1.5px solid #e2e8f0;border-radius:14px;padding:14px 16px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:12px;-webkit-tap-highlight-color:transparent}
+.opt:active{transform:scale(0.98)}
+.opt.selected{border-color:#06b6d4;background:#f0fdff}
+.opt-circle{width:22px;height:22px;border-radius:50%;border:2px solid #cbd5e1;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+.opt.selected .opt-circle{background:#06b6d4;border-color:#06b6d4}
+.opt-check{display:none;width:10px;height:10px}
+.opt.selected .opt-check{display:block}
+.opt-text{font-size:14px;color:#334155;font-weight:400;line-height:1.35}
+.opt.selected .opt-text{color:#0f1f2e;font-weight:500}
+.opt-emoji{font-size:20px;flex-shrink:0}
+
+/* BOTÓN SIGUIENTE */
+.next-btn{width:100%;background:#06b6d4;color:#fff;font-size:15px;font-weight:700;padding:16px;border-radius:12px;border:none;cursor:pointer;margin-top:20px;opacity:0.4;pointer-events:none;transition:all 0.2s}
+.next-btn.enabled{opacity:1;pointer-events:all}
+.next-btn.enabled:active{background:#0891b2}
+.next-btn-final{width:100%;background:#e2e8f0;color:#94a3b8;font-size:15px;font-weight:700;padding:16px;border-radius:12px;border:none;cursor:pointer;margin-top:20px;transition:all 0.2s}
+.next-btn-final.enabled{background:#06b6d4;color:#fff}
+.next-btn-final.enabled:active{background:#0891b2}
+
+/* LOADING */
+.loading-wrap{display:none;padding:40px 20px;text-align:center}
+.loading-wrap.active{display:block}
+.loading-icon{font-size:40px;margin-bottom:16px;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+.loading-title{font-size:20px;font-weight:700;color:#0f1f2e;margin-bottom:8px}
+.loading-sub{font-size:13px;color:#64748b;margin-bottom:24px}
+.loading-bar-bg{background:#e8f7fa;border-radius:20px;height:8px;overflow:hidden}
+.loading-bar-fill{height:8px;background:#06b6d4;border-radius:20px;width:0%;transition:width 0.3s}
+.loading-steps{display:flex;flex-direction:column;gap:8px;margin-top:16px;text-align:left}
+.ls{font-size:12px;color:#94a3b8;display:flex;align-items:center;gap:8px;transition:color 0.3s}
+.ls.done{color:#0e7490}
+.ls-dot{width:8px;height:8px;border-radius:50%;background:#e2e8f0;flex-shrink:0;transition:background 0.3s}
+.ls.done .ls-dot{background:#06b6d4}
+
+/* RESULTADO */
+.result-wrap{display:none;padding:0}
+.result-wrap.active{display:block}
+
+.result-hero{background:linear-gradient(155deg,#0f2744,#061830);padding:28px 20px 24px;text-align:center}
+.result-score-wrap{width:100px;height:100px;border-radius:50%;border:4px solid #06b6d4;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 16px;background:rgba(6,182,212,0.1)}
+.result-score{font-size:32px;font-weight:800;color:#06b6d4;line-height:1}
+.result-score-label{font-size:9px;color:#7ab8d4;letter-spacing:1px;margin-top:2px}
+.result-title{font-size:22px;font-weight:800;color:#fff;line-height:1.25;margin-bottom:8px}
+.result-sub{font-size:13px;color:#94b8d0;line-height:1.6}
+
+.result-body{padding:20px;background:#fff}
+.result-section{margin-bottom:20px}
+.rs-label{font-size:10px;font-weight:700;color:#0e7490;letter-spacing:2px;margin-bottom:8px}
+.rs-title{font-size:16px;font-weight:700;color:#0f1f2e;margin-bottom:6px}
+.rs-text{font-size:13px;color:#475569;line-height:1.7}
+.rs-text strong{color:#0f1f2e;font-weight:600}
+
+/* INDICADORES PERSONALIZADOS */
+.indicators{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.ind{background:#f8fafc;border-radius:10px;padding:10px 12px;border:1px solid #e2e8f0}
+.ind-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+.ind-name{font-size:12px;font-weight:600;color:#334155}
+.ind-val{font-size:11px;font-weight:700}
+.ind-val.high{color:#dc2626}
+.ind-val.med{color:#f59e0b}
+.ind-val.low{color:#0e7490}
+.ind-bar-bg{background:#e2e8f0;border-radius:10px;height:4px}
+.ind-bar{height:4px;border-radius:10px;transition:width 1s ease}
+.ind-bar.high{background:#ef4444}
+.ind-bar.med{background:#f59e0b}
+.ind-bar.low{background:#06b6d4}
+
+/* PRUEBA SOCIAL */
+.social-proof{background:#f8fafc;padding:20px}
+.sp-title{font-size:14px;font-weight:700;color:#0f1f2e;margin-bottom:14px;text-align:center}
+
+/* Notificaciones de compra en vivo */
+.live-notifs{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.notif{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:10px;animation:slideIn 0.5s ease}
+@keyframes slideIn{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
+.notif-avatar{width:36px;height:36px;border-radius:50%;background:#e0f7fa;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#0e7490;flex-shrink:0}
+.notif-text{flex:1}
+.notif-name{font-size:12px;font-weight:600;color:#0f1f2e}
+.notif-action{font-size:11px;color:#64748b;margin-top:1px}
+.notif-time{font-size:10px;color:#94a3b8;flex-shrink:0}
+.notif-dot{width:6px;height:6px;border-radius:50%;background:#22c55e;flex-shrink:0}
+
+/* Rating */
+.rating-card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:16px;margin-bottom:14px;text-align:center}
+.rating-stars{font-size:24px;margin-bottom:4px}
+.rating-num{font-size:36px;font-weight:800;color:#0f1f2e;line-height:1}
+.rating-total{font-size:12px;color:#64748b;margin-top:4px}
+.rating-bars{margin-top:12px;display:flex;flex-direction:column;gap:4px}
+.rbar-row{display:flex;align-items:center;gap:8px}
+.rbar-label{font-size:11px;color:#64748b;width:24px;text-align:right;flex-shrink:0}
+.rbar-wrap{flex:1;background:#e2e8f0;border-radius:10px;height:5px}
+.rbar-fill{height:5px;border-radius:10px;background:#f59e0b}
+.rbar-count{font-size:11px;color:#94a3b8;width:24px;flex-shrink:0}
+
+/* Testimonios */
+.testimonios{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.testi{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:14px}
+.testi-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.testi-avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;background:#e0f7fa;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#0e7490;flex-shrink:0}
+.testi-name{font-size:13px;font-weight:600;color:#0f1f2e}
+.testi-location{font-size:11px;color:#94a3b8}
+.testi-stars{font-size:12px;color:#f59e0b;margin-top:1px}
+.testi-text{font-size:13px;color:#475569;line-height:1.6}
+.testi-verified{display:inline-flex;align-items:center;gap:4px;font-size:10px;color:#0e7490;margin-top:6px}
+
+/* Contador */
+.counter-strip{background:#0f1f2e;padding:12px 20px;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:14px}
+.counter-num{font-size:18px;font-weight:800;color:#06b6d4}
+.counter-text{font-size:12px;color:#94b8d0}
+
+/* Media gallery */
+.media-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;scrollbar-width:none}
+.media-row::-webkit-scrollbar{display:none}
+.media-thumb{width:90px;height:120px;border-radius:10px;object-fit:cover;flex-shrink:0;border:2px solid #e2e8f0}
+
+/* CTA RESULTADO */
+.cta-section{padding:20px;background:#fff;border-top:1px solid #e8f0f8}
+.cta-urgency{background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:10px 12px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.cta-urgency-icon{font-size:16px;flex-shrink:0}
+.cta-urgency-text{font-size:12px;color:#9f1239;line-height:1.5}
+.cta-price-box{background:#f8fafc;border-radius:14px;padding:16px;text-align:center;margin-bottom:16px;border:1px solid #e2e8f0}
+.cta-old-price{font-size:13px;color:#94a3b8;text-decoration:line-through;margin-bottom:2px}
+.cta-price{font-size:42px;font-weight:800;color:#0f1f2e;line-height:1}
+.cta-price span{font-size:18px;color:#06b6d4;vertical-align:super}
+.cta-price-note{font-size:11px;color:#64748b;margin-top:4px}
+.btn-main{display:block;width:100%;background:#06b6d4;color:#fff;font-size:16px;font-weight:700;padding:18px;border-radius:14px;text-align:center;text-decoration:none;margin-bottom:10px}
+.btn-secondary{display:block;width:100%;background:#0f1f2e;color:#fff;font-size:14px;font-weight:600;padding:15px;border-radius:14px;text-align:center;text-decoration:none}
+.cta-micro{text-align:center;font-size:11px;color:#94a3b8;margin-top:10px;line-height:1.6}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon">🛡</div>
+    <div class="logo-text">Protocolo Calma Total</div>
+  </div>
+  <div class="free-badge">GRATIS</div>
+</div>
+
+<!-- HERO -->
+<div class="diag-hero">
+  <div class="diag-tag">DIAGNÓSTICO GRATUITO</div>
+  <h1 class="diag-h1">¿Por qué tu cuerpo<br>no puede <span>calmarse</span>?</h1>
+  <p class="diag-sub">Responde 7 preguntas y descubre el estado real de tu sistema nervioso — y qué hacer al respecto.</p>
+  <div class="diag-stats">
+    <div class="dstat"><div class="dstat-num">48,291</div><div class="dstat-label">diagnósticos realizados</div></div>
+    <div class="dstat"><div class="dstat-num">2 min</div><div class="dstat-label">tiempo promedio</div></div>
+    <div class="dstat"><div class="dstat-num">100%</div><div class="dstat-label">gratuito</div></div>
+  </div>
+</div>
+
+<!-- PROGRESO -->
+<div class="progress-wrap" id="progress-wrap">
+  <div class="progress-top">
+    <span class="progress-label">Tu progreso</span>
+    <span class="progress-step" id="progress-text">Pregunta 1 de 7</span>
+  </div>
+  <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-bar"></div></div>
+</div>
+
+<!-- QUIZ -->
+<div class="quiz-wrap" id="quiz-wrap">
+
+  <!-- P1 -->
+  <div class="question-block active" id="q1">
+    <div class="q-num">PREGUNTA 1 DE 7</div>
+    <div class="q-text">¿Con qué frecuencia sientes presión o tensión en el pecho sin razón aparente?</div>
+    <div class="q-sub">Esto puede aparecer al despertar, en momentos de reposo o sin causa identificable.</div>
+    <div class="options">
+      <div class="opt" onclick="selectOpt(this,1,4)"><span class="opt-emoji">😰</span><div class="opt-circle"><svg class="opt-check" viewBox="0 0 10 10"><polyline points="1,5 4,8 9,2" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="opt-text">Todos los días — es lo primero que siento al despertar</div></div>
+      <div class="opt" onclick="selectOpt(this,1,3)"><span class="opt-emoji">😟</span><div class="opt-circle"><svg class="opt-check" viewBox="0 0 10 10"><polyline points="1,5 4,8 9,2" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="opt-text">Varias veces por semana</div></div>
+      <div class="opt" onclick="selectOpt(this,1,2)"><span class="opt-emoji">😐</span><div class="opt-circle"><svg class="opt-check" viewBox="0 0 10 10"><polyline points="1,5 4,8 9,2" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="opt-text">De vez en cuando, pero no siempre</div></div>
+      <div class="opt" onclick="selectOpt(this,1,1)"><span class="opt-emoji">🙂</span><div class="opt-circle"><svg class="opt-check" viewBox="0 0 10 10"><polyline points="1,5 4,8 9,2" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="opt-text">Rara vez o nunca</div></div>
+    </div>
+    <button class="next-btn" id="next1" onclick="nextQ(1)">Siguiente →</button>
+  </div>
+
+  <!-- P2 -->
+  <div class="question-block" id="q2">
+    <div class="q-num">PREGUNTA 2 DE 7</div>
+    <div class="q-text">¿Cómo describirías tu mente en un día normal?</div>
+    <div class="q-sub">Sé honesto — nadie más verá esta respuesta.</div>
+    <div class="options">
+      <div class="opt" onclick="selectOpt(this,2,4)"><span class="opt-emoji">🌀</span><div class="opt-circle"><svg class="opt-check" viewBox="0 0 10 10"><polyline points="1,5 4,8 9,2" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="opt-text">Acelerada, imposible de apagar — incluso cuando duermo</div></div>
+      <div class="opt" onclick="selectOpt(this,2,3)"><span class="opt-emoji">💭</span><div class="opt-circle"><svg class="opt-check" viewBox="0 0 10 10"><polyline points="1,5 4,8 9,2" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="opt-text">Muchos pensamientos, me cuesta concentrarme</div></div>
+      <div class="opt" onclick="selectOpt(this,2,2)"><span class="opt-emoji">😶</span><div class="opt-circle"><svg class="opt-check" viewBox="0 0 10 10"><polyline points="1,5 4,8 9,2" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="opt-text">A veces agitada, pero puedo manejarla</div></div>
+      <div class="opt" onclick="selectOpt(this,2,1)"><span class="opt-emoji">😌</span><div class="opt-circle"><svg class="opt-check" viewBox="0 0 10 10"><polyline points="1,5 4,8 9,2" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="opt-text">Tranquila y en control la mayor parte del tiempo</div></div>
+    </div>
+    <button class="next-btn" id="next2" onclick="nextQ(2)">Siguiente →</button>
+  </div>
+
+  <!-- P3 -->
+  <div class="question-block" id="q3">
+    <div class="q-num">PREGUNTA 3 DE 7</div>
+    <div class="q-text">¿Has tenido episodios donde sientes que "algo malo va a pasar" sin saber por qué?</div>
+    <div class="q-sub">Sensación de miedo repentino, palpitaciones o pérdida de control.</div>
+    <div class="options">
+      <div class="opt" onclick="selectOpt(this,3,4)"><span class="opt-emoji">💔</span><div class="opt-circle"><svg class="opt-check" viewBox="0 0 10 10"><polyline points="1,5 4,8 9,2" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="opt-text">Sí, con frecuencia — me han paralizado completamente</div></div>
+      <div class="opt" onclick="selectOpt(this,3,3)"><span class="opt-emoji">😨</span><div class="opt-circle"><svg class="opt-check" viewBox="0 0 10 10"><polyline points="1,5 4,8 9,2" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="opt-text">Sí, algunas veces — me asustan mucho</div></div>
+      <div class="opt" onclick="selectOpt(this,3,2)"><span class="opt-emoji">😬</span><div class="opt-circle"><svg class="opt-check" viewBox="0 0 10 10"><polyline points="1,5 4,8 9,2" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="opt-text">Una o dos veces, pero no es frecuente</div></div>
+      <div class="opt" onclick="selectOpt(this,3,1)"><span class="opt-emoji">✅</span><div class="opt-circle"><svg class="opt-check" viewBox="0 0 10 10"><polyline points="1,5 4,8 9,2" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="opt-text">No, no me ha pasado</div></div>
+    </div>
+    <button class="next-btn" id="next3" onclick="nextQ(3)">Siguiente →</button>
+  </div>
+
+  <!-- P4 -->
+  <div class="question-block" id="q4">
+    <div class="q-num">PREGUNTA 4 DE 7</div>
+    <div class="q-text">¿Cómo está tu energía y estado de ánimo a lo largo del día?</div>
+    <div class="q-sub">Piensa en una semana normal, no en tus mejores ni peores días.</div>
+    <div class="options">
+      <div class="opt" onclick="selectOpt(this,4,4)"><span class="opt-emoji">🪫</span><div class="opt-circle"><svg class="opt-check" viewBox="0 0 10 10"><polyline points="1,5 4,8 9,2" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="opt-text">Agotado/a la mayor parte del tiempo, sin motivación</div></div>
+      <div class="opt" onclick="selectOpt(this,4,3)"><span class="opt-emoji">📉</span><div class="opt-circle"><svg class="opt-check" viewBox="0 0 10 10"><polyline points="1,5 4,8 9,2" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="opt-text">Muchos altibajos — momentos de energía y luego caídas</div></div>
+      <div class="opt" onclick="selectOpt(this,4,2)"><span class="opt-emoji">😑</span><div class="opt-circle"><svg class="opt-check" viewBox="0 0 10 10"><polyline points="1,5 4,8 9,2" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="opt-text">Estable pero sin mucha vitalidad</div></div>
+      <div class="opt" onclick="selectOpt(this,4,1)"><span class="opt-emoji">⚡</span><div class="opt-circle"><svg class="opt-check" viewBox="0 0 10 10"><polyline points="1,5 4,8 9,2" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="opt-text">Buena energía y ánimo estable la mayoría del tiempo</div></div>
+    </div>
+    <button class="next-btn" id="next4" onclick="nextQ(4)">Siguiente →</button>
+  </div>
+
+  <!-- P5 -->
+  <div class="question-block" id="q5">
+    <div class="q-num">PREGUNTA 5 DE 7</div>
+    <div class="q-text">¿Cómo está tu digestión y bienestar intestinal?</div>
+    <div class="q-sub">El intestino y el cerebro están directamente conectados — esto es clave para tu diagnóstico.</div>
+    <div class="options">
+      <div class="opt" onclick="selectOpt(this,5,4)"><span class="opt-emoji">🤢</span><div class="opt-circle"><svg class="opt-check" viewBox="0 0 10 10"><polyline points="1,5 4,8 9,2" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="opt-text">Mal — hinchazón, gases, irregularidad o molestias frecuentes</div></div>
+      <div class="opt" onclick="selectOpt(this,5,3)"><span class="opt-emoji">😕</span><div class="opt-circle"><svg class="opt-check" viewBox="0 0 10 10"><polyline points="1,5 4,8 9,2" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="opt-text">Regular — algunos días bien, otros con molestias</div></div>
+      <div class="opt" onclick="selectOpt(this,5,2)"><span class="opt-emoji">🙄</span><div class="opt-circle"><svg class="opt-check" viewBox="0 0 10 10"><polyline points="1,5 4,8 9,2" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="opt-text">Bastante bien, aunque no le presto mucha atención</div></div>
+      <div class="opt" onclick="selectOpt(this,5,1)"><span class="opt-emoji">💚</span><div class="opt-circle"><svg class="opt-check" viewBox="0 0 10 10"><polyline points="1,5 4,8 9,2" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="opt-text">Excelente, sin problemas digestivos</div></div>
+    </div>
+    <button class="next-btn" id="next5" onclick="nextQ(5)">Siguiente →</button>
+  </div>
+
+  <!-- P6 -->
+  <div class="question-block" id="q6">
+    <div class="q-num">PREGUNTA 6 DE 7</div>
+    <div class="q-text">¿Cuánto tiempo llevas sintiendo esto y qué has intentado?</div>
+    <div class="q-sub">Queremos entender tu historial para darte el diagnóstico más preciso.</div>
+    <div class="options">
+      <div class="opt" onclick="selectOpt(this,6,4)"><span class="opt-emoji">😫</span><div class="opt-circle"><svg class="opt-check" viewBox="0 0 10 10"><polyline points="1,5 4,8 9,2" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="opt-text">Más de 1 año — he probado pastillas, terapia y nada funciona</div></div>
+      <div class="opt" onclick="selectOpt(this,6,3)"><span class="opt-emoji">😞</span><div class="opt-circle"><svg class="opt-check" viewBox="0 0 10 10"><polyline points="1,5 4,8 9,2" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="opt-text">6 meses a 1 año — he intentado algunas cosas sin éxito</div></div>
+      <div class="opt" onclick="selectOpt(this,6,2)"><span class="opt-emoji">🤔</span><div class="opt-circle"><svg class="opt-check" viewBox="0 0 10 10"><polyline points="1,5 4,8 9,2" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="opt-text">Menos de 6 meses — recién estoy buscando soluciones</div></div>
+      <div class="opt" onclick="selectOpt(this,6,1)"><span class="opt-emoji">🌱</span><div class="opt-circle"><svg class="opt-check" viewBox="0 0 10 10"><polyline points="1,5 4,8 9,2" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="opt-text">Es reciente y aún no he hecho nada al respecto</div></div>
+    </div>
+    <button class="next-btn" id="next6" onclick="nextQ(6)">Siguiente →</button>
+  </div>
+
+  <!-- P7 -->
+  <div class="question-block" id="q7">
+    <div class="q-num">PREGUNTA 7 DE 7</div>
+    <div class="q-text">Si pudieras cambiar una sola cosa de cómo te sientes, ¿cuál sería?</div>
+    <div class="q-sub">Esta respuesta personaliza tu resultado final.</div>
+    <div class="options">
+      <div class="opt" onclick="selectOpt(this,7,4)"><span class="opt-emoji">🧘</span><div class="opt-circle"><svg class="opt-check" viewBox="0 0 10 10"><polyline points="1,5 4,8 9,2" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="opt-text">Sentirme tranquila/o — sin esa tensión constante</div></div>
+      <div class="opt" onclick="selectOpt(this,7,3)"><span class="opt-emoji">🧠</span><div class="opt-circle"><svg class="opt-check" viewBox="0 0 10 10"><polyline points="1,5 4,8 9,2" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="opt-text">Tener claridad mental — sin niebla ni agotamiento</div></div>
+      <div class="opt" onclick="selectOpt(this,7,2)"><span class="opt-emoji">⚡</span><div class="opt-circle"><svg class="opt-check" viewBox="0 0 10 10"><polyline points="1,5 4,8 9,2" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="opt-text">Recuperar mi energía y motivación</div></div>
+      <div class="opt" onclick="selectOpt(this,7,1)"><span class="opt-emoji">💪</span><div class="opt-circle"><svg class="opt-check" viewBox="0 0 10 10"><polyline points="1,5 4,8 9,2" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="opt-text">Volver a sentirme yo mismo/a</div></div>
+    </div>
+    <button class="next-btn-final" id="next7" onclick="tryShowLoading()">Ver mi diagnóstico →</button>
+  </div>
+
+</div>
+
+<!-- LOADING -->
+<div class="loading-wrap" id="loading-wrap">
+  <div class="loading-icon">🔬</div>
+  <div class="loading-title">Analizando tus respuestas...</div>
+  <div class="loading-sub">Procesando tu diagnóstico personalizado</div>
+  <div class="loading-bar-bg"><div class="loading-bar-fill" id="loading-bar"></div></div>
+  <div class="loading-steps">
+    <div class="ls" id="ls1"><div class="ls-dot"></div>Evaluando síntomas físicos</div>
+    <div class="ls" id="ls2"><div class="ls-dot"></div>Analizando estado emocional</div>
+    <div class="ls" id="ls3"><div class="ls-dot"></div>Revisando conexión intestino-cerebro</div>
+    <div class="ls" id="ls4"><div class="ls-dot"></div>Calculando nivel de desequilibrio</div>
+    <div class="ls" id="ls5"><div class="ls-dot"></div>Preparando recomendación personalizada</div>
+  </div>
+</div>
+
+<!-- RESULTADO -->
+<div class="result-wrap" id="result-wrap">
+
+  <!-- Hero resultado -->
+  <div class="result-hero">
+    <div class="result-score-wrap">
+      <div class="result-score" id="result-score">87</div>
+      <div class="result-score-label">NIVEL DE ALERTA</div>
+    </div>
+    <div class="result-title" id="result-title">Tu sistema nervioso está en <span style="color:#06b6d4">modo alerta crítico</span></div>
+    <div class="result-sub" id="result-sub">Tus respuestas indican un desequilibrio significativo en tu eje intestino-cerebro y metabolismo.</div>
+  </div>
+
+  <!-- Cuerpo resultado -->
+  <div class="result-body">
+
+    <div class="result-section">
+      <div class="rs-label">TU DIAGNÓSTICO</div>
+      <div class="rs-title" id="diag-title">Desequilibrio intestinal con sistema nervioso excitado</div>
+      <div class="rs-text" id="diag-text">Tus respuestas muestran un patrón muy claro: tu intestino no está produciendo suficiente serotonina, lo que mantiene tu sistema nervioso en modo alerta permanente. Esto explica la tensión física, los pensamientos acelerados y los episodios de pánico que describes. <strong>No es un problema psicológico — es biológico.</strong></div>
+    </div>
+
+    <div class="result-section">
+      <div class="rs-label">TUS INDICADORES</div>
+      <div class="indicators" id="indicators">
+        <div class="ind">
+          <div class="ind-row"><div class="ind-name">Microbiota intestinal</div><div class="ind-val high">Comprometida</div></div>
+          <div class="ind-bar-bg"><div class="ind-bar high" style="width:85%"></div></div>
+        </div>
+        <div class="ind">
+          <div class="ind-row"><div class="ind-name">Sistema nervioso</div><div class="ind-val high">Nivel de alerta alto</div></div>
+          <div class="ind-bar-bg"><div class="ind-bar high" style="width:80%"></div></div>
+        </div>
+        <div class="ind">
+          <div class="ind-row"><div class="ind-name">Equilibrio metabólico</div><div class="ind-val med">Desregulado</div></div>
+          <div class="ind-bar-bg"><div class="ind-bar med" style="width:65%"></div></div>
+        </div>
+        <div class="ind">
+          <div class="ind-row"><div class="ind-name">Producción de serotonina</div><div class="ind-val high">Por debajo del óptimo</div></div>
+          <div class="ind-bar-bg"><div class="ind-bar high" style="width:78%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="result-section">
+      <div class="rs-label">LO QUE NECESITAS</div>
+      <div class="rs-title">El Protocolo Calma Total está diseñado para tu caso</div>
+      <div class="rs-text">De las <strong>4,291 personas con tu perfil exacto</strong> que siguieron el Protocolo Calma Total, el <strong>89% reportó mejora significativa en las primeras 2 semanas.</strong><br><br>El protocolo ataca exactamente lo que tus respuestas revelan: restaura la microbiota, estabiliza el metabolismo y calma el sistema nervioso — desde la raíz.</div>
+    </div>
+
+  </div>
+
+  <!-- CONTADOR LIVE -->
+  <div class="counter-strip">
+    <div class="counter-num" id="live-counter">247</div>
+    <div class="counter-text">personas vieron este resultado hoy</div>
+  </div>
+
+  <!-- PRUEBA SOCIAL -->
+  <div class="social-proof">
+    <div class="sp-title">Lo que dicen quienes tenían tu mismo diagnóstico</div>
+
+    <!-- Notificaciones en vivo -->
+    <div class="live-notifs" id="live-notifs">
+      <div class="notif">
+        <div class="notif-dot"></div>
+        <div class="notif-avatar">MR</div>
+        <div class="notif-text">
+          <div class="notif-name">María R. — Colombia</div>
+          <div class="notif-action">acaba de acceder al protocolo</div>
+        </div>
+        <div class="notif-time">hace 2 min</div>
+      </div>
+      <div class="notif">
+        <div class="notif-dot"></div>
+        <div class="notif-avatar">LC</div>
+        <div class="notif-text">
+          <div class="notif-name">Laura C. — México</div>
+          <div class="notif-action">completó la semana 1 ✓</div>
+        </div>
+        <div class="notif-time">hace 5 min</div>
+      </div>
+      <div class="notif">
+        <div class="notif-dot"></div>
+        <div class="notif-avatar">AP</div>
+        <div class="notif-text">
+          <div class="notif-name">Ana P. — Argentina</div>
+          <div class="notif-action">acaba de acceder al protocolo</div>
+        </div>
+        <div class="notif-time">hace 8 min</div>
+      </div>
+    </div>
+
+    <!-- Rating -->
+    <div class="rating-card">
+      <div class="rating-stars">⭐⭐⭐⭐⭐</div>
+      <div class="rating-num">4.9</div>
+      <div class="rating-total">Basado en 1,847 calificaciones verificadas</div>
+      <div class="rating-bars">
+        <div class="rbar-row"><div class="rbar-label">5 ★</div><div class="rbar-wrap"><div class="rbar-fill" style="width:89%"></div></div><div class="rbar-count">1642</div></div>
+        <div class="rbar-row"><div class="rbar-label">4 ★</div><div class="rbar-wrap"><div class="rbar-fill" style="width:8%"></div></div><div class="rbar-count">148</div></div>
+        <div class="rbar-row"><div class="rbar-label">3 ★</div><div class="rbar-wrap"><div class="rbar-fill" style="width:2%"></div></div><div class="rbar-count">37</div></div>
+        <div class="rbar-row"><div class="rbar-label">2 ★</div><div class="rbar-wrap"><div class="rbar-fill" style="width:0.5%"></div></div><div class="rbar-count">12</div></div>
+        <div class="rbar-row"><div class="rbar-label">1 ★</div><div class="rbar-wrap"><div class="rbar-fill" style="width:0.5%"></div></div><div class="rbar-count">8</div></div>
+      </div>
+    </div>
+
+    <!-- Fotos de resultados -->
+    <div style="font-size:12px;color:#64748b;margin-bottom:8px;font-weight:500">Fotos compartidas por usuarios del protocolo</div>
+    <div class="media-row">
+      <img class="media-thumb" src="img-resultado.jpg" alt="Resultado">
+      <img class="media-thumb" src="img-app.jpg" alt="Usando la app">
+      <img class="media-thumb" src="img-jugo.jpg" alt="Jugo protocolo">
+      <img class="media-thumb" src="img-fermentados.jpg" alt="Fermentados">
+    </div>
+
+    <!-- Testimonios -->
+    <div class="testimonios">
+      <div class="testi">
+        <div class="testi-header">
+          <div class="testi-avatar">SC</div>
+          <div>
+            <div class="testi-name">Sofía C.</div>
+            <div class="testi-location">Bogotá, Colombia</div>
+            <div class="testi-stars">⭐⭐⭐⭐⭐</div>
+          </div>
+        </div>
+        <div class="testi-text">"Llevaba 2 años con ataques de pánico casi diarios. Hice el diagnóstico, vi que mi puntaje era muy parecido al mío ahora, y decidí intentarlo. En la semana 2 los ataques bajaron a la mitad. Al terminar las 4 semanas, desaparecieron. No puedo creer que algo tan sencillo haya funcionado cuando los médicos no podían ayudarme."</div>
+        <div class="testi-verified">✓ Compra verificada · hace 3 semanas</div>
+      </div>
+
+      <div class="testi">
+        <div class="testi-header">
+          <div class="testi-avatar">VM</div>
+          <div>
+            <div class="testi-name">Valentina M.</div>
+            <div class="testi-location">Ciudad de México, México</div>
+            <div class="testi-stars">⭐⭐⭐⭐⭐</div>
+          </div>
+        </div>
+        <div class="testi-text">"Tenía exactamente el mismo diagnóstico — sistema nervioso en alerta y microbiota comprometida. Lo que más me sorprendió fue que en los primeros 3 días de cambiar la alimentación ya dormía mejor. El protocolo es muy claro, no tienes que pensar nada, solo seguir los pasos. Lo recomiendo muchísimo."</div>
+        <div class="testi-verified">✓ Compra verificada · hace 1 mes</div>
+      </div>
+
+      <div class="testi">
+        <div class="testi-header">
+          <div class="testi-avatar">KR</div>
+          <div>
+            <div class="testi-name">Karla R.</div>
+            <div class="testi-location">Buenos Aires, Argentina</div>
+            <div class="testi-stars">⭐⭐⭐⭐⭐</div>
+          </div>
+        </div>
+        <div class="testi-text">"Probé todo — ansiolíticos, terapia, meditación. Nada funcionaba de raíz. Cuando entendí que el problema era mi intestino todo cambió. El protocolo es muy bien explicado y la app hace que sea imposible perderse. Ya van 6 semanas y me siento una persona diferente."</div>
+        <div class="testi-verified">✓ Compra verificada · hace 6 semanas</div>
+      </div>
+
+      <div class="testi">
+        <div class="testi-header">
+          <div class="testi-avatar">LG</div>
+          <div>
+            <div class="testi-name">Lucía G.</div>
+            <div class="testi-location">Santiago, Chile</div>
+            <div class="testi-stars">⭐⭐⭐⭐⭐</div>
+          </div>
+        </div>
+        <div class="testi-text">"Al principio era escéptica — $7 me parecía sospechosamente barato para algo tan completo. Pero lo intenté y fue la mejor inversión que hice. El diagnóstico fue preciso, el protocolo claro, y los resultados reales. Compré para mi hermana también."</div>
+        <div class="testi-verified">✓ Compra verificada · hace 2 semanas</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CTA FINAL -->
+  <div class="cta-section">
+    <div class="cta-urgency">
+      <div class="cta-urgency-icon">⏰</div>
+      <div class="cta-urgency-text">El precio de lanzamiento de <strong>$7 USD</strong> solo está disponible por tiempo limitado. Las personas con tu diagnóstico que empiezan hoy ven los primeros cambios en 72 horas.</div>
+    </div>
+    <div class="cta-price-box">
+      <div class="cta-old-price">Valor real: $47 USD</div>
+      <div class="cta-price"><span>$</span>7</div>
+      <div class="cta-price-note">USD · Pago único · Sin suscripción</div>
+    </div>
+    <a href="landing.html" class="btn-main">Ver el Protocolo Completo →</a>
+    <a href="https://TU-CHECKOUT-HOTMART.com" class="btn-secondary">Acceder directamente por $7 →</a>
+    <div class="cta-micro">Acceso inmediato · PDF + App interactiva · Basado en Vive Primal + Frank Suárez<br>✓ Compra segura · ✓ Soporte por email</div>
+  </div>
+
+</div>
+
+<script>
+var scores = [0,0,0,0,0,0,0];
+var totalScore = 0;
+
+function selectOpt(el, q, score) {
+  var opts = document.getElementById('q'+q).querySelectorAll('.opt');
+  opts.forEach(function(o){ o.classList.remove('selected'); });
+  el.classList.add('selected');
+  scores[q-1] = score;
+  var btn = document.getElementById('next'+q);
+  btn.classList.add('enabled');
+}
+
+function nextQ(q) {
+  document.getElementById('q'+q).classList.remove('active');
+  var next = q + 1;
+  if (next <= 7) {
+    document.getElementById('q'+next).classList.add('active');
+    var pct = Math.round((next-1)/7*100);
+    document.getElementById('progress-bar').style.width = pct+'%';
+    document.getElementById('progress-text').textContent = 'Pregunta '+next+' de 7';
+  }
+}
+
+function tryShowLoading() {
+  if(scores[6] === 0) {
+    var q7 = document.getElementById('q7');
+    q7.style.animation = 'shake 0.3s ease';
+    setTimeout(function(){ q7.style.animation = ''; }, 300);
+    return;
+  }
+  showLoading();
+}
+
+function showLoading() {
+  document.getElementById('quiz-wrap').style.display = 'none';
+  document.getElementById('progress-wrap').style.display = 'none';
+  document.getElementById('loading-wrap').classList.add('active');
+  totalScore = scores.reduce(function(a,b){return a+b;},0);
+  var pct = Math.round((totalScore / 28) * 100);
+
+  var bar = document.getElementById('loading-bar');
+  var steps = ['ls1','ls2','ls3','ls4','ls5'];
+  var i = 0;
+  var interval = setInterval(function(){
+    bar.style.width = Math.min((i+1)*20, 100)+'%';
+    if (i < steps.length) {
+      document.getElementById(steps[i]).classList.add('done');
+    }
+    i++;
+    if (i >= 6) {
+      clearInterval(interval);
+      setTimeout(function(){ showResult(pct); }, 500);
+    }
+  }, 600);
+}
+
+function showResult(pct) {
+  document.getElementById('loading-wrap').classList.remove('active');
+  document.getElementById('progress-wrap').style.display = 'none';
+  document.getElementById('result-wrap').classList.add('active');
+  document.getElementById('result-score').textContent = pct+'%';
+
+  var title, sub, diagTitle, diagText;
+  if (pct >= 75) {
+    title = 'Tu sistema nervioso está en <span style="color:#06b6d4">modo alerta crítico</span>';
+    sub = 'Tus respuestas indican un desequilibrio significativo en tu eje intestino-cerebro y metabolismo. Necesitas atención ahora.';
+    diagTitle = 'Desequilibrio intestinal severo con sistema nervioso hiperactivo';
+    diagText = 'Tus respuestas muestran un patrón muy claro: tu microbiota está comprometida y tu sistema nervioso lleva tiempo atrapado en modo emergencia. El 90% de tu serotonina se produce en el intestino — y el tuyo no está funcionando como debería. <strong>Esto explica todo lo que sientes. Y tiene solución natural.</strong>';
+  } else if (pct >= 50) {
+    title = 'Tu sistema nervioso está <span style="color:#f59e0b">bajo estrés constante</span>';
+    sub = 'Tus respuestas muestran un desequilibrio moderado que, si no se atiende, puede empeorar con el tiempo.';
+    diagTitle = 'Microbiota desequilibrada con metabolismo desregulado';
+    diagText = 'Estás en una etapa donde los síntomas son manejables pero persistentes. Tu intestino no está en su mejor estado y eso se refleja en tu estado de ánimo, energía y niveles de estrés. <strong>Este es el mejor momento para actuar — antes de que el desequilibrio se profundice.</strong>';
+  } else {
+    title = 'Tu sistema nervioso muestra <span style="color:#06b6d4">señales tempranas de alerta</span>';
+    sub = 'Estás en las etapas iniciales. Actuar ahora puede prevenir que los síntomas se intensifiquen.';
+    diagTitle = 'Desequilibrio leve con potencial de reversión rápida';
+    diagText = 'Tus síntomas son leves pero reales. El sistema nervioso está respondiendo a algo que tu cuerpo necesita atender. <strong>Las personas con tu perfil son las que mejoran más rápido con el protocolo — porque el desequilibrio aún no es profundo.</strong>';
+  }
+
+  document.getElementById('result-title').innerHTML = title;
+  document.getElementById('result-sub').textContent = sub;
+  document.getElementById('diag-title').textContent = diagTitle;
+  document.getElementById('diag-text').innerHTML = diagText;
+  window.scrollTo(0, 0);
+  startLiveCounter();
+  startLiveNotifs();
+}
+
+function startLiveCounter() {
+  var base = 247;
+  var el = document.getElementById('live-counter');
+  setInterval(function(){
+    base += Math.floor(Math.random()*3);
+    el.textContent = base;
+  }, 8000);
+}
+
+var notifData = [
+  {i:'MR', n:'María R.', l:'Colombia', a:'acaba de acceder al protocolo', t:'hace 1 min'},
+  {i:'LC', n:'Laura C.', l:'México', a:'completó la semana 1 ✓', t:'hace 3 min'},
+  {i:'AP', n:'Ana P.', l:'Argentina', a:'acaba de acceder al protocolo', t:'hace 6 min'},
+  {i:'DS', n:'Diana S.', l:'Chile', a:'dejó una reseña de 5 estrellas ⭐', t:'hace 9 min'},
+  {i:'KM', n:'Karen M.', l:'Perú', a:'acaba de acceder al protocolo', t:'hace 11 min'},
+  {i:'VR', n:'Valeria R.', l:'España', a:'completó el diagnóstico', t:'hace 14 min'},
+  {i:'CR', n:'Carolina R.', l:'Venezuela', a:'acaba de acceder al protocolo', t:'hace 17 min'},
+  {i:'PM', n:'Patricia M.', l:'Ecuador', a:'completó la semana 2 ✓', t:'hace 20 min'},
+];
+var notifIdx = 3;
+
+function startLiveNotifs() {
+  setInterval(function(){
+    var wrap = document.getElementById('live-notifs');
+    var d = notifData[notifIdx % notifData.length];
+    notifIdx++;
+    var el = document.createElement('div');
+    el.className = 'notif';
+    el.innerHTML = '<div class="notif-dot"></div><div class="notif-avatar">'+d.i+'</div><div class="notif-text"><div class="notif-name">'+d.n+' — '+d.l+'</div><div class="notif-action">'+d.a+'</div></div><div class="notif-time">'+d.t+'</div>';
+    wrap.insertBefore(el, wrap.firstChild);
+    if (wrap.children.length > 4) wrap.removeChild(wrap.lastChild);
+  }, 12000);
+}
+</script>
+</body>
+</html>
